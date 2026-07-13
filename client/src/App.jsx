@@ -11,11 +11,19 @@ import Login from './components/auth/Login';
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5005/api';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('stats'); // default to stats
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); // { token, role, username }
+  // Restore session from localStorage on first load
+  const savedUser = (() => {
+    try { return JSON.parse(localStorage.getItem('quant_user')); } catch { return null; }
+  })();
+
+  const [activeTab, setActiveTab] = useState(
+    savedUser?.role === 'admin' ? 'upload' : 'stats'
+  );
+  const [isLoggedIn, setIsLoggedIn] = useState(!!savedUser);
+  const [user, setUser] = useState(savedUser);
 
   const handleLogin = (userData) => {
+    localStorage.setItem('quant_user', JSON.stringify(userData));
     setUser(userData);
     setIsLoggedIn(true);
     // Redirect admin to upload, user to stats
@@ -23,6 +31,7 @@ function App() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('quant_user');
     setUser(null);
     setIsLoggedIn(false);
   };
@@ -35,6 +44,7 @@ function App() {
     );
   }
 
+
   const isAdmin = user?.role === 'admin';
 
   return (
@@ -42,64 +52,68 @@ function App() {
 
       {/* Top Navigation Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
+
+        {/* Row 1: Logo + Logout */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0">
               Q
             </div>
             <h1 className="text-xl font-bold text-gray-900 tracking-tight">Quant</h1>
           </div>
 
-          <nav className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
-            {isAdmin && (
-              <TabButton
-                active={activeTab === 'upload'}
-                onClick={() => setActiveTab('upload')}
-                icon={<Search className="w-4 h-4" />}
-                label="Upload & Match"
-              />
-            )}
-            <TabButton
-              active={activeTab === 'stats'}
-              onClick={() => setActiveTab('stats')}
-              icon={<BarChart3 className="w-4 h-4" />}
-              label="Statistics"
-            />
-            <TabButton
-              active={activeTab === 'hierarchy'}
-              onClick={() => setActiveTab('hierarchy')}
-              icon={<Layers className="w-4 h-4" />}
-              label="Hierarchical Stats"
-            />
-            <TabButton
-              active={activeTab === 'export'}
-              onClick={() => setActiveTab('export')}
-              icon={<FileDown className="w-4 h-4" />}
-              label="Export Report"
-            />
-            <TabButton
-              active={activeTab === 'comparison'}
-              onClick={() => setActiveTab('comparison')}
-              icon={<Layers className="w-4 h-4" />}
-              label="Year Comparison"
-            />
-          </nav>
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
+          >
+            Logout
+          </button>
+        </div>
 
-          <div className="flex items-center gap-4">
-            {/* <div className="text-sm font-medium text-gray-700">
-              {user?.username} <span className="text-gray-400 capitalize">({user?.role})</span>
-            </div> */}
-            <button
-              onClick={handleLogout}
-              className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
-            >
-              Logout
-            </button>
+        {/* Row 2: Nav tabs — scrollable on mobile */}
+        <div className="border-t border-gray-100 overflow-x-auto">
+          <div className="max-w-6xl mx-auto px-4 sm:px-8">
+            <nav className="flex items-center space-x-1 py-1.5 min-w-max sm:min-w-0">
+              {isAdmin && (
+                <TabButton
+                  active={activeTab === 'upload'}
+                  onClick={() => setActiveTab('upload')}
+                  icon={<Search className="w-4 h-4" />}
+                  label="Upload & Match"
+                />
+              )}
+              <TabButton
+                active={activeTab === 'stats'}
+                onClick={() => setActiveTab('stats')}
+                icon={<BarChart3 className="w-4 h-4" />}
+                label="Statistics"
+              />
+              <TabButton
+                active={activeTab === 'hierarchy'}
+                onClick={() => setActiveTab('hierarchy')}
+                icon={<Layers className="w-4 h-4" />}
+                label="Hierarchical Stats"
+              />
+              <TabButton
+                active={activeTab === 'export'}
+                onClick={() => setActiveTab('export')}
+                icon={<FileDown className="w-4 h-4" />}
+                label="Export Report"
+              />
+              <TabButton
+                active={activeTab === 'comparison'}
+                onClick={() => setActiveTab('comparison')}
+                icon={<Layers className="w-4 h-4" />}
+                label="Year Comparison"
+              />
+            </nav>
           </div>
         </div>
+
       </div>
 
-      <div className="max-w-6xl mx-auto p-8">
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
         {activeTab === 'upload' && isAdmin && <UploadAndMatchView />}
         {activeTab === 'stats' && <StatsDashboard />}
         {activeTab === 'hierarchy' && <HierarchicalStats />}
