@@ -17,9 +17,9 @@ export default function Login({ onLogin }) {
 
     try {
       const res = await axios.post(`${API_BASE}/auth/login`, { username, password });
-      
+
       const { token, role, username: returnedUsername } = res.data;
-      
+
       // Pass the auth data up
       onLogin({ token, role, username: returnedUsername });
     } catch (err) {
@@ -103,7 +103,9 @@ export default function Login({ onLogin }) {
             )}
           </button>
         </form>
+
       </div>
+
     </div>
   );
 }
