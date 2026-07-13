@@ -3,7 +3,7 @@ import axios from 'axios';
 import { UploadCloud, CheckCircle2, Download, AlertCircle, FileSpreadsheet, Layers, PieChart as PieChartIcon, Search, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-const API_BASE = 'http://localhost:5005/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5005/api';
 
 const YearComparison = () => {
   const [summary, setSummary] = useState(null);

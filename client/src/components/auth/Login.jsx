@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Lock, User, LogIn, AlertCircle } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5005/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5005/api';
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');

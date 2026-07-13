@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Download, FileSpreadsheet, Loader2 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5005/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5005/api';
 
 const ExportReport = () => {
   const [downloading, setDownloading] = useState(false);

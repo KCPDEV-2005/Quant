@@ -3,7 +3,7 @@ import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Treemap, LabelList } from 'recharts';
 import { ChevronRight, LayoutList, Search, ChevronUp, ChevronDown } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5005/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5005/api';
 
 const blueScale = (value, max) => {
   return `rgb(30, ${Math.round(80 + (value/max)*100)}, ${Math.round(180 + (value/max)*60)})`;

@@ -8,7 +8,7 @@ import ExportReport from './components/stats/ExportReport';
 import YearComparison from './components/comparison/YearComparison';
 import Login from './components/auth/Login';
 
-const API_BASE = 'http://localhost:5005/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5005/api';
 
 function App() {
   const [activeTab, setActiveTab] = useState('stats'); // default to stats
