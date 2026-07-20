@@ -38,38 +38,38 @@ const getOverviewStats = async () => {
         districts: { $addToSet: '$district' },
         talukas: { $addToSet: '$subDistrict' },
         totalPrimaryCoordinators: {
-          $sum: { $cond: [{ $and: [{ $ne: ['$primaryCoordinatorName', null] }, { $ne: ['$primaryCoordinatorName', ''] }] }, 1, 0] }
+          $sum: { $cond: [{ $ne: [{ $ifNull: ['$primaryCoordinatorName', ''] }, ''] }, 1, 0] }
         },
         totalAlternateCoordinators: {
-          $sum: { $cond: [{ $and: [{ $ne: ['$alternateCoordinatorName', null] }, { $ne: ['$alternateCoordinatorName', ''] }] }, 1, 0] }
+          $sum: { $cond: [{ $ne: [{ $ifNull: ['$alternateCoordinatorName', ''] }, ''] }, 1, 0] }
         },
         totalBothCoordinators: {
           $sum: {
             $cond: [
               {
                 $and: [
-                  { $ne: ['$primaryCoordinatorName', null] }, { $ne: ['$primaryCoordinatorName', ''] },
-                  { $ne: ['$alternateCoordinatorName', null] }, { $ne: ['$alternateCoordinatorName', ''] }
+                  { $ne: [{ $ifNull: ['$primaryCoordinatorName', ''] }, ''] },
+                  { $ne: [{ $ifNull: ['$alternateCoordinatorName', ''] }, ''] }
                 ]
               }, 1, 0
             ]
           }
         },
         totalMissingPrimary: {
-          $sum: { $cond: [{ $or: [{ $eq: ['$primaryCoordinatorName', null] }, { $eq: ['$primaryCoordinatorName', ''] }] }, 1, 0] }
+          $sum: { $cond: [{ $eq: [{ $ifNull: ['$primaryCoordinatorName', ''] }, ''] }, 1, 0] }
         },
         totalMissingAlternate: {
-          $sum: { $cond: [{ $or: [{ $eq: ['$alternateCoordinatorName', null] }, { $eq: ['$alternateCoordinatorName', ''] }] }, 1, 0] }
+          $sum: { $cond: [{ $eq: [{ $ifNull: ['$alternateCoordinatorName', ''] }, ''] }, 1, 0] }
         },
         jeevanvidyaRefs: { $addToSet: '$jeevanvidyaRefPhone' },
         missingEmail: {
-          $sum: { $cond: [{ $or: [{ $eq: ['$schoolEmail', null] }, { $eq: ['$schoolEmail', ''] }] }, 1, 0] }
+          $sum: { $cond: [{ $eq: [{ $ifNull: ['$schoolEmail', ''] }, ''] }, 1, 0] }
         },
         missingPrincipal: {
-          $sum: { $cond: [{ $or: [{ $eq: ['$principalName', null] }, { $eq: ['$principalName', ''] }] }, 1, 0] }
+          $sum: { $cond: [{ $eq: [{ $ifNull: ['$principalName', ''] }, ''] }, 1, 0] }
         },
         missingUDISE: {
-          $sum: { $cond: [{ $or: [{ $eq: ['$udiseCode', null] }, { $eq: ['$udiseCode', ''] }] }, 1, 0] }
+          $sum: { $cond: [{ $eq: [{ $ifNull: ['$udiseCode', ''] }, ''] }, 1, 0] }
         }
       }
     },
@@ -142,6 +142,7 @@ const getOverviewStats = async () => {
         parsedDate: {
           $dateFromString: {
             dateString: '$submissionDate',
+            format: '%d/%m/%Y',
             onError: null,
             onNull: null
           }
